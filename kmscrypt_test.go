@@ -53,6 +53,20 @@ func TestAesEncryptDecrypt(t *testing.T) {
 		}
 	}
 }
+func TestSimpleDecrypt(t *testing.T) {
+	mock := mockedKMS{resp: kms.GenerateDataKeyOutput{Plaintext: []byte("hoge")}}
+	res, err := SimpleDecrypt(mock, "a")
+	if err != nil && err.Error() != "illegal base64 data at input byte 0" {
+		t.Fatalf("got %s", err)
+	}
+	res, err = SimpleDecrypt(mock, "aG9nZQo=")
+	if res != "hoge" {
+		t.Fatal("Fatal SimpleDecrypt")
+	}
+	if err != nil {
+		t.Fatalf("got %s", err)
+	}
+}
 
 type mockedKMS struct {
 	kmsiface.KMSAPI

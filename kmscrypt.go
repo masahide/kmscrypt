@@ -112,3 +112,16 @@ func clearKey(data []byte) {
 		data[i] = 0
 	}
 }
+
+// SimpleDecrypt simple KMS decrypter of aws lambda encryption helpers
+func SimpleDecrypt(kmsSvc kmsiface.KMSAPI, encrypted string) (string, error) {
+	decodedBytes, err := base64.StdEncoding.DecodeString(encrypted)
+	if err != nil {
+		return "", err
+	}
+	response, err := kmsSvc.Decrypt(&kms.DecryptInput{CiphertextBlob: decodedBytes})
+	if err != nil {
+		return "", err
+	}
+	return string(response.Plaintext), nil
+}
